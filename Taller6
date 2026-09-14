@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+"""
+Taller de Laboratorio Final: El Experto Automatico
+Sesion 6 - Arboles de Decision y Machine Learning
+"""
+
+from sklearn.tree import DecisionTreeClassifier, export_text
+import numpy as np
+
+# 1. Dataset simulado de Marketing
+# Columnas (X): [Edad, Horas_Online, Compras_Previas]
+X = np.array([
+    [22, 5, 3],   # joven, mucho tiempo online, ya compro antes
+    [45, 1, 0],   # mayor, poco tiempo online, nunca compro
+    [25, 6, 2],   # joven, mucho tiempo online, ya compro antes
+    [50, 0, 0],   # mayor, casi nada online, nunca compro
+    [30, 4, 1],   # joven-adulto, tiempo online medio, compro antes
+    [60, 1, 0],   # mayor, poco tiempo online, nunca compro
+    [23, 7, 4],   # joven, mucho tiempo online, ya compro varias veces
+    [55, 2, 0],   # mayor, poco tiempo online, nunca compro
+    [28, 5, 2],   # joven, mucho tiempo online, ya compro antes
+    [48, 1, 1],   # mayor, poco tiempo online, compro una vez
+])
+
+# Etiquetas (Y): 1 = Hizo clic en el anuncio, 0 = Lo ignoro
+# Patron logico: clientes jovenes con mucho tiempo online y compras previas
+# tienden a hacer clic; los mayores con poco tiempo online lo ignoran.
+Y = np.array([1, 0, 1, 0, 1, 0, 1, 0, 1, 0])
+
+# 2. Entrenamiento del arbol de decision
+arbol = DecisionTreeClassifier(max_depth=3, random_state=0)
+arbol.fit(X, Y)
+
+# 3. Extraccion de las reglas en texto (Base de Conocimientos generada por IA)
+nombres_variables = ["Edad", "Horas_Online", "Compras_Previas"]
+reglas_texto = export_text(arbol, feature_names=nombres_variables)
+
+print("Base de Reglas generada automaticamente:\n")
+print(reglas_texto)
+
+# 4. Prueba con un cliente nuevo (no visto en el entrenamiento)
+cliente_nuevo = np.array([[26, 6, 3]])  # joven, mucho tiempo online, compro antes
+prediccion = arbol.predict(cliente_nuevo)
+print(f"Prediccion para cliente nuevo {cliente_nuevo.tolist()}: "
+      f"{'Hara clic' if prediccion[0] == 1 else 'Lo ignorara'}")
